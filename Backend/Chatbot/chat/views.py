@@ -67,7 +67,13 @@ def chat_api(request):
     Message.objects.create(sender="bot", text=bot_text)
     return JsonResponse({"response": bot_text})
 
+<<<<<<< HEAD
     
+=======
+    return JsonResponse({"response":gemini})
+
+   
+>>>>>>> 31a9393c8485fb314435527b5d816cc8eeafc2ff
     # echo $env:GEMINI_API_KEY
 
 

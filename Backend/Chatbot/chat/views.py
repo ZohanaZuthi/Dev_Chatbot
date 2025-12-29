@@ -2,7 +2,8 @@ from django.shortcuts import render
 import json
 from django.http import JsonResponse
 import os
-from google import genai
+# from google import genai
+import litellm
 from .models import Message
 from django.views.decorators.csrf import csrf_exempt
 from pathlib import Path
@@ -38,21 +39,35 @@ def chat_api(request):
     User question: {msg}
     """
 
-    api_key = os.environ.get("GEMINI_API_KEY")
-    client = genai.Client(api_key=api_key)
+    # api_key = os.environ.get("GEMINI_API_KEY")
+    # client = genai.Client(api_key=api_key)
 
     # gemini-2.5-flash
-    response = client.models.generate_content(
-        model="gemini-3-flash-preview",
-        contents=prompt,
+    # response = client.models.generate_content(
+    #     model="gemini-3-flash-preview",
+    #     contents=prompt,
+    # )
+
+    # gemini=response.text
+    
+    api_key = os.environ.get('GROQ_API_KEY')
+    if not api_key:
+        return JsonResponse({"response": "Missing GROQ_API_KEY"}, status=500)
+
+
+    response = litellm.completion(
+        model="groq/llama-3.3-70b-versatile", 
+        messages=[
+        {"role": "user", "content": prompt}
+    ],
     )
+    
+    bot_text = response["choices"][0]["message"]["content"]
 
-    gemini=response.text
-    Message.objects.create(sender="bot",text=gemini)
+    Message.objects.create(sender="bot", text=bot_text)
+    return JsonResponse({"response": bot_text})
 
-    return JsonResponse({"response":gemini})
-
-    # setx GEMINI_API_KEY "AIzaSyAyiBFIqKGkQD8lMNCI3pl7UDg4yTmyrN8"
+    
     # echo $env:GEMINI_API_KEY
 
 

@@ -52,7 +52,7 @@ def chat_api(request):
 
     return JsonResponse({"response":gemini})
 
-    # setx GEMINI_API_KEY "AIzaSyAyiBFIqKGkQD8lMNCI3pl7UDg4yTmyrN8"
+   
     # echo $env:GEMINI_API_KEY
 
 
